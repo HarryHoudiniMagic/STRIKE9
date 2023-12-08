@@ -1,37 +1,23 @@
+WIN = windows
+LIN = linux
 SCRIPT = game.py
+WIN_EXE = --onefile $(SCRIPT) --distpath $(WIN) --workpath $(WIN) --specpath $(WIN) --clean
+LIN_EXE = --onefile $(SCRIPT) --distpath $(LIN) --workpath $(LIN) --specpath $(LIN) --clean
 
-BUILD_WIN = pyinstaller --onefile $(SCRIPT) -n game_win
 
-HTML_TEMPLATE = index.html
+windows:
+	mkdir $(WIN)
+	pip install pyinstaller
+	pyinstaller $(WIN_EXE)
+	./$(WIN)/Game.exe
 
-HTML_OUTPUT = game.html
-BUILD_LIN = pyinstaller --onefile $(SCRIPT) -n game_lin
+linux:
+	mkdir $(LIN)
+	pip install pyinstaller
+	pyinstaller $(LIN_EXE)
+	./$(LIN)/Game.exe
 
-all: win lin
-
-win:
-	mkdir -p win
-	@echo "Сборка для Windows..."
-	@if $(BUILD_WIN); then \
-		mv dist/game_win.exe win/; \
-		rm -rf build dist game_win.spec __pycache__; \
-	else \
-		echo "Ошибка при сборке для Windows"; \
-	fi
-
-lin:
-	mkdir -p lin
-	@echo "Сборка для Linux..."
-	@if $(BUILD_LIN); then \
-		mv dist/game_lin lin/; \
-		rm -rf build dist game_lin.spec __pycache__; \
-	else \
-		echo "Ошибка при сборке для Linux"; \
-	fi
-
-all: game.html
-
-web: game.py index.html
+web: game.py
 	@echo "Creating game.html..."
 	@echo "<!DOCTYPE html>" > game.html
 	@echo "<html lang=\"en\">" >> game.html
@@ -49,10 +35,12 @@ web: game.py index.html
 	@echo "</body>" >> game.html
 	@echo "</html>" >> game.html
 	@echo "game.html created successfully."
-	@echo "Removing index.html..."
-	rm -f index.html
-	@echo "index.html removed successfully."
+
 
 
 clean:
 	rm -rf win lin
+
+clean:
+	rm -rf $(WIN)
+	rm -rf $(LIN)
